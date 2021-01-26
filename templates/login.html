@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>他山实验室</title>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.14.4/umd/popper.min.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://cdn.oini.top/statistics/bdtjoinicf.js"></script>
+    <link rel="icon" href="https://cdn.oini.top/img/cloud.png" type="image/png">
+    <style type="text/css">
+        *{
+            padding:0;
+            margin:0;
+        }
+        html{
+            width: 100%;
+            height: 100%;
+        }
+		body{
+            width:100%;
+            height:100%;
+            background:  white;
+            background-size: 100% 100%;
+            position: relative;
+        }
+        .login-area{
+            width:35%;
+            height:30%;
+            position:absolute;
+            top:50%;
+            left:50%;
+            transform: translate(-50%,-50%);
+            background:white;
+            '''border: 2px solid black;'''
+            filter:alpha(opacity=100);
+            -moz-opacity: 1;
+            opacity: 1;
+        }
+        .juzhong{
+            display:flex;
+            justify-content: center;
+        }
+        .user-div{
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .nowrap{
+            white-space: nowrap;
+            line-height: 35px;
+            margin-left: 15px;
+            height: 30px;
+            color: black;
+        }
+        .password-div{
+            margin-bottom: 10px;
+
+        }
+        .floatright{
+            float: right;
+            margin-right: 60px;
+            margin-top: 10px;
+            width: 15%;
+            height:10%;
+        }
+        .floatleft{
+            float: right;
+            margin-right: 70px;
+            margin-top: 10px;
+            width: 15%;
+            height: 10%;
+        }
+        .navbar{
+
+            height: 60px;
+        }
+        .navbar-brand{
+            position: absolute;
+			margin: 0 auto;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+        }
+		.pic{
+			position: absolute;
+			margin: 0 auto;
+			width: 470px;
+			top: -25%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+            <a class="navbar-brand" href="{{ url_for('login') }}"><img src="../static/他山logo.png" width="60" height="40">
+            他山实验室零件库查询系统</a>
+            <!--div><img src="../static/图片1.png" width="210" height="50" ></div-->
+    </nav>
+
+
+    <div class="login-area">
+        <div class="row show-grid juzhong user-div">
+            <div class="col-md-2 nowrap">用户名</div>
+            <div class="col-md-7 kuang"><input type="text" class="form-control" id="name"
+                placeholder="请输入用户名"></div>
+        </div>
+        <div class="row show-grid juzhong password-div">
+            <div class="col-md-2 nowrap">密&emsp;码</div>
+            <div class="col-md-7 kuang"><input type="password" class="form-control" id="password"
+                placeholder="请输入密码"></div>
+        </div>
+        <div class="row floatright">
+             <button type="button" class="btn btn-primary btn-lg confirm" onclick="confirm()" id="submit" style="background: white; color: black; border: 1px solid lightgray">登录</button>
+        </div>
+        <div class="row floatleft">
+            <button type="button" class="btn btn-primary btn-lg registered" onclick="jump()" style="background: white; color: black; border: 1px solid lightgray">注册</button>
+        </div>
+
+		<div class="pic">
+			<img src="../static/标准组合1.jpg" style="height: 100px;width: 480px">
+		</div>
+    </div>
+
+</body>
+<!--  -->
+<script>
+    function jump(){
+        window.location.href='../registered/'
+    }
+
+    function confirm() {
+        let userName = $("#name").val();
+        let passWord = $("#password").val();
+        if (!userName || userName.value == '') {
+            window.alert('请输入用户名');
+            return false;
+        } else if (!passWord || passWord.value == '') {
+            window.alert('请输入密码');
+            return false;
+        }
+        console.log(userName, passWord);
+
+        $.ajax({
+            type: 'GET',
+            url: '../Keywords/login_in',
+            data: {"username": userName,"password":passWord},
+            dataType:'json',
+            success:function(data){
+                if (data){
+                    if (data.code == "1") { //判断返回值，这里根据的业务内容可做调整
+                        setTimeout(function () {//做延时以便显示登录状态值
+                           //window.alert("正在登录中...");
+                           console.log(data);
+                           window.location.href =  "../index?username="+encodeURIComponent(userName);//指向登录的页面地址
+                            // location.href = "../query?key=" + encodeURIComponent(key_words);
+                       },100)
+                    } else {
+                        window.alert(data.msg);//显示登录失败的原因
+                        return false;
+                    }
+                }
+            },
+            error : function(data){
+                showMsg(data.msg);
+            }
+        })
+
+    }
+
+//监听回车键提交
+$(function(){
+    document.onkeydown=keyDownSearch;
+    function keyDownSearch(e) {
+        // 兼容FF和IE和Opera
+        var theEvent = e || window.event;
+        var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+        if (code == 13) {
+            $('#submit').click();//具体处理函数
+            return false;
+        }
+        return true;
+    }
+});
+
+
+</script>
+</html>

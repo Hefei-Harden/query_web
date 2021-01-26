@@ -1,0 +1,86 @@
+{% extends 'layout.html' %}
+{% block title %}查询 - 他山在线工具{% endblock %}
+{% block body %}
+<script>
+    $(document).ready(function(){
+        $("#submit").click(function() {
+            var xh = $("#usr").val();
+            var pw = $("#pwd").val();
+            var yz = $("#yzm").val();
+            var v1 = $("#vs1").val();
+            var v2 = $("#vs2").val();
+            var yr = $("#year").val();
+            var no = $("#num").val();
+            var ch = $("#choose").val();
+            data = {
+                "xuehao": xh,
+                "mima": pw,
+                "yanzm": yz,
+                "vis1": v1,
+                "vis2": v2,
+                "year": yr,
+                "num": no,
+                "way": ch,
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/result',
+                data: data,
+                dataType: 'html',
+                success: function(data) {
+                    $("#result")[0].innerHTML=data;
+                    //$("#result").text(data);
+                },
+                error: function(type) {
+                    alert('Error, Try again!')
+                }
+            });
+            return false
+        });
+    });
+</script>
+<div class="jumbotron" style="padding: 1rem;margin-bottom: 4px;">
+<div class="row">
+    <div class="col-lg-6">
+        <label for="usr" class="radio-inline">学号:</label>
+        <input type="text" class="form-control" id="usr">
+    </div>
+    <div class="col-lg-6">
+        <label for="pwd">密码:</label>
+        <input type="password" class="form-control" id="pwd">
+    </div>
+</div>
+    <p></p>
+    <form class="form-inline">
+        <label for="year">选择:&nbsp;</label>
+            <select name="year" class="custom-select" id="choose">
+                <option value="kb" selected>课表</option>
+                <option value="cj">成绩</option>
+                <option value="xxk">选修课</option>
+            </select>&nbsp;
+        <label for="year">学年:&nbsp;</label>
+            <select name="year" class="custom-select" id="year">
+                <option value="2018-2019" selected>2018-2019</option>
+                <option value="2017-2018">2017-2018</option>
+            </select>&nbsp;
+        <label for="num">学期:&nbsp;</label>
+            <select name="num" class="custom-select" id="num">
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+            </select>&nbsp;
+        <label for="yzm">验证码:&nbsp;</label>
+            <input type="text" class="form-control" id="yzm">&nbsp;
+            <img src="data:image/gif;base64,{{ vcode }}"/>
+            <a href="/get" class="btn" role="button">刷新</a>
+    </form>
+        <input type="hidden" id="vs1" value="{{ v1 }}">
+        <input type="hidden" id="vs2" value="{{ v2 }}">
+    <p></p>
+    <button type="submit" class="btn btn-outline-dark btn-block" id="submit">查询</button>
+</div>
+<div id="result" style="min-height: 800px;"></div>
+<div id="gotop" title="返回顶部" style="position: fixed;bottom: 5%;right: 2%;">
+    <a href="javascript:;"><i class="fa fa-angle-double-up fa-4x" aria-hidden="true"></i></a>
+</div>
+<script src="https://cdn.oini.top/js/gotop.js"></script>
+{% endblock %}

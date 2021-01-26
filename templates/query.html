@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>他山实验室</title>
+    <script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.min.js"></script>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.14.4/umd/popper.min.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.14.4/umd/popper.min.js"></script>
+    <style>
+        html,body{
+            padding:0;
+            margin:0;
+        }
+        .my-container{
+            width:100%;
+            margin:0 auto;
+            position: relative;
+        }
+        .myselect{
+            position: absolute;
+            top:40px;
+            left:18%;
+            background: #F9F0DA;
+        }
+        .selectname{
+            position: absolute;
+            top:40px;
+            left:10%;
+        }
+        .input_keyword{
+            position: absolute;
+            top:40px;
+            left:43%;
+        }
+        .table-div{
+            width:1000px;
+            height:1000px;
+            margin:0 auto;
+            overflow:hidden;
+            margin-top: 90px;
+            overflow-y: auto;
+        }
+        .table-div>.tr{
+            display: flex;
+            height: 50px;
+            border:1px solid gray
+        }
+        .table-div>.tr>.td:nth-child(1){
+            flex:1;
+            height:100%;
+            border-right: 1px solid gray;
+        }
+        .table-div>.tr>.td:nth-child(2){
+            flex:3;
+            height:100%;
+            overflow:auto;
+
+        }
+        div.search {padding: 30px 0;}
+
+        form {
+            left: 10%;
+            position: relative;
+            width: 300px;
+            margin: 0 auto;
+        }
+
+        input, button {
+            border: none;
+            outline: none;
+
+        }
+
+        input {
+            width: 100%;
+            height: 42px;
+            padding-left: 13px;
+        }
+
+        button {
+            height: 42px;
+            width: 42px;
+            cursor: pointer;
+            position: absolute;
+        }
+        .td{background: white;color: black;font-size: 16px;font-weight: bolder;border: 2px;}
+        /*搜索框1*/
+        .bar1 {background: #A3D0C3;}
+        .bar1 input {
+            border: 2px solid #7BA7AB;
+            border-radius: 5px;
+            background: #F9F0DA;
+            color: #9E9C9C;
+        }
+        .bar1 button {
+            top: 0;
+            right: 0;
+            background: #7BA7AB;
+            border-radius: 0 5px 5px 0;
+        }
+        .bar1 button:before {
+            content: "\f002";
+            font-family: FontAwesome;
+            font-size: 16px;
+            color: #F9F0DA;
+        }
+
+        ::-webkit-input-placeholder{
+            opacity: 0;
+        }    /* 使用webkit内核的浏览器 */
+        :-moz-placeholder{
+            opacity: 0;
+        }                  /* Firefox版本4-18 */
+        ::-moz-placeholder{
+            opacity: 0;
+        }                  /* Firefox版本19+ */
+        :-ms-input-placeholder{
+            opacity: 0;
+        }
+        div.search>input:focus{
+            width:300px;
+            border:none;
+            outline:none;
+            border-bottom: 1px solid gray;
+        }
+        div.search>input:focus::-webkit-input-placeholder{
+            opacity: 1;
+        }    /* 使用webkit内核的浏览器 */
+        div.search>input:focus:-moz-placeholder{
+            opacity: 1;
+        }                  /* Firefox版本4-18 */
+        div.search>input:focus::-moz-placeholder{
+            opacity: 1;
+        }                  /* Firefox版本19+ */
+        div.search>input:focus:-ms-input-placeholder{
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+        <div class="container">
+            <div align="left"><img src="../static/他山logo.png" width="50" height="40" align="left"></div>
+            <a class="navbar-brand" href="{{ url_for('login') }}">他山实验室零件库查询系统</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+
+         <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav" style="width: 650px;">
+                  <li class="nav-item">
+                    <a class="nav-link" href="/query"><font color="#FFFFFF" size="4px">关键字查找    </font></a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="javascript:query_bmhz()"><font color="#FFFFFF" size="4px">编码汇总    </font></a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/get"><font color="#FFFFFF" size="4px">更改和添加记录    </font></a>
+                  </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="/get"><font color="#FFFFFF" size="4px">上传文件    </font></a>
+                  </li>
+                  <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown"><font color="#FFFFFF" size="4px">其他</font></a>
+                      <div class="dropdown-menu">
+                        <a class="dropdown-item" href="https://www.baidu.com">百度</a>
+                        <a class="dropdown-item" href="/404">404</a>
+                        <a class="dropdown-item" href="/404">404</a>
+                        <a class="dropdown-item" href="/404">404</a>
+                        <a class="dropdown-item" href="/404">404</a>
+                      </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login"><font color="#FFFFFF" size="2px"> <span id="username">未登录</span> </font></a>
+                  </li>
+            </ul>
+            </div>
+            <img src="../static/图片1.png" width="210" height="50" align="right"></div>
+
+        </div>
+    </nav>
+    <div class="my-container">
+        <select class="myselect" placeholder="请选择"></select>
+        <span class="selectname" >请选择零件类型</span>
+        <div class="search bar1">
+            <span class="input_keyword" >请输入关键字</span>
+            <form  onsubmit="return false">
+
+                <input type="text" id="keywords"  placeholder="请输入您要搜索的内容...">
+                <button  value="提交" onclick="query_table()"></button>
+            </form>
+
+        </div>
+    </div>
+    <div class="table-div mytable">
+        <!-- <div class="tr">
+            <div class="td">1111</div>
+            <div class="td">说</div>
+        </div> -->
+    </div>
+
+</body>
+<script>
+    //decodeURIComponent
+
+    if (window.location.href.indexOf("?") != -1 ){
+        var key=decodeURIComponent(window.location.href.split("?")[1].split("=")[1]);
+        var name=decodeURIComponent(window.location.href.split("?")[2].split("=")[1]);
+        $("#keywords").val(key);
+        $("#username").html(name);
+    }
+    else{
+        var name='未登录'
+        $("#username").html(name);
+
+    }
+
+    function query_bmhz() {
+        var key_words = "编码汇总";
+        console.log(key_words);
+        if (key_words.length > 0) {
+            location.href = "../query?key=" + encodeURIComponent(key_words) + "?username=" + encodeURIComponent(name);
+            console.log(location.href)
+            //location.href = "../query?keyword=key_words"
+        }
+    }
+
+    function selectOption(optionArr){
+
+        let optionStr='<option hidden>请选择</option>';
+        for(let i=0;i<optionArr.length;i++){
+            optionStr+=`<option value="${optionArr[i].id}">${optionArr[i].name}</option>`
+        }
+        $(".myselect").html(optionStr);
+    }
+    function createTable(tableData){
+        let tableArr=[],tableObj={};
+        Object.keys(tableData).forEach(function(key){
+            tableObj={
+                name:key,
+                text:tableData[key]
+            }
+            tableArr.push(tableObj);
+        })
+        let tableStr='';
+        for(let i=0;i<tableArr.length;i++){
+            tableStr+=`<div class="tr">
+                            <div class="td">${tableArr[i].name}</div>
+                            <div class="td">${tableArr[i].text}</div>
+                        </div>`
+        }
+        $(".mytable").html(tableStr);
+
+    }
+    // 传入的option数组
+    let optionData=[
+            {id:0,name:"电线"},
+            {id:1,name:"电容"},
+            {id:2,name:"控制器"},
+            {id:3,name:"壳体"},
+            {id:4,name:"单片机"},
+            {id:5,name:"端子"},
+            {id:6,name:"晶振"},
+            {id:7,name:"二极管"},
+            {id:8,name:"三极管"},
+            {id:9,name:"防静电管"},
+            {id:10,name:"保险丝"},
+            {id:11,name:"孔座"},
+            {id:12,name:"芯片"},
+            {id:13,name:"插接件"},
+            {id:14,name:"金属支架"},
+            {id:15,name:"线路板"},
+            {id:16,name:"包装材料"},
+            {id:17,name:"继电器"},
+            {id:18,name:"电阻"},
+            {id:19,name:"BNC头"},
+            {id:20,name:"滤光片"},
+            {id:21,name:"壳体总成"},
+            {id:22,name:"线路板总成"},
+            {id:23,name:"传感器"},
+            {id:24,name:"软件"},
+            {id:25,name:"金属件"},
+            {id:26,name:"辅料"},
+            {id:27,name:"套管"},
+            {id:28,name:"稳压管"},
+            {id:29,name:"连接线"},
+            {id:30,name:"标签"},
+            {id:31,name:"贴片"},
+            {id:32,name:"塑胶材料"},
+            {id:33,name:"客供材料"},
+            {id:34,name:"临时物料"},
+            {id:35,name:"全部"},
+        ];
+    //let tableData={'客供材料_71': '202000002, 贴片磁珠, CBG201209U800T,80R±25%@100MHz，0805，风华高科, 2020.03.25, null,null' ,
+      //          '电容_21':'202000002, 贴片磁珠, CBG201209U800T,80R±25%@100MHz，0805，风华高科, 2020.03.25, null,null',
+        //       '电容_22': '202000002, 贴片磁珠, CBG201209U800T,80R±25%@100MHz，0805，风华高科, 2020.03.25, null,null,nullnull,null,nullnull,null,nullnull,null,null'
+          //    }
+    var selectVal;
+    selectOption(optionData);
+    $(".myselect").change(function(e){
+   selectVal= $(".myselect option:selected").text()
+    //这是select的选中的option的值；
+   console.log(selectVal)});
+
+
+    //按表查询
+    function query_table() {
+
+        var keywords=$("#keywords").val();
+            console.log(keywords);
+            $.ajax({
+                type: 'POST',
+                url: '../Keywords/table_query',
+                data: {"key_words": keywords, "table_name": selectVal},
+                dataType: 'json',
+                success: function (data) {
+                    if (data) {
+                        if (data.code=='1'){
+                            console.log(data);
+                            createTable(data.value);
+                        }
+                        else{
+                            window.alert('没有您想要的数据')
+                            window.location.replace(window.location.href)
+                        }
+
+                        // }, 100)
+                    } else {
+                        window.alert('没有您想要的内容');//显示登录失败的原因
+                        return false;
+                    }
+                },
+                error: function (e) {
+                    window.alert(出错了)
+                }
+            })
+            // 创建表格
+            // window.alert(4);
+
+    }
+</script>
+</html>
